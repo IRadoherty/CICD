@@ -32,9 +32,6 @@ The configuration preoperties are referenced below.
 	<add key="Snowflake.RevisionTracking" value="false"/>
 ````
 
-A helpful tip for the Account and the Host is if your Snowflake instance is "nt85445.east-us-2.azure.snowflakecomputing.com" the Account name is "nt85445" and the Host is "nt85445.east-us-2.azure.snowflakecomputing.com".
-
-The Snowflake.RevisionTracking 
 
 ### Running in Snowflake
 To run auto rules in Snowflake:
