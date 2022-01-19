@@ -11,7 +11,7 @@ The configuration is referenced below. The first grouping ties to the connection
 |**User**| The user account that is configured in Snowflake.
 |**Password**| Password set for the user account logging in.
 |**Account**| The full account name.
-|**Host**| Specifies the hostname for your account in the following format: <ACCOUNT>.snowflakecomputing.com.
+|**Host**| Specifies the hostname for your account in the following format: ACCOUNT.snowflakecomputing.com.
 |**Warehouse**| The configured warehouse.
 |**Database**| The database being ran against.
 |**Schema**| The defined schema.
