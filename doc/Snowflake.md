@@ -16,7 +16,7 @@ The configuration preoperties are referenced below.
 |**Database**| The database being ran against.
 |**Schema**| The defined schema.
 |**Type**| Controls creation of a procedure or function in Snowflake. Field should be set as procedure or function.
-|**RevisionTracking**| Enable revision tracking. This may become useful if you would like the rule applications' revisions to be brought into the function or procedure to back test against other revisions. For example, if turned on, the revision number would be attached to the end of the function or procedure name where "function_4" would run revision 4 and "function_5" would run revision 5.
+|**RevisionTracking**| Enable revision tracking. This may become useful if you would like the rule application revision to be brought into the function or procedure to back test against other revisions. For example, if turned on, the revision number would be attached to the end of the function or procedure name where "function_4" would run revision 4 and "function_5" would run revision 5.
 
 ````
 	<add key="Snowflake.User" value="{AccountUserName}"/>
