@@ -38,10 +38,15 @@ A helpful tip for the Account and the Host is if your Snowflake instance is "nt8
 The Snowflake.RevisionTracking may become useful if you would like the rule applications' revisions to be brought into the function or procedure to back test against other revisions. For example, if turned on, the revision number would be attached to the end of the function or procedure name where "function_4" would run revision 4 and "function_5" would run revision 5.
 
 The run auto rules in Snowflake:
+````
 CALL RuleApplicationName('RootEntityName', parse_json('{Initial Entity State}'));
-
+````
 Run an explicit rule set:
+````
 CALL RuleApplicationName('RootEntityName', parse_json('{Initial Entity State}'), 'Explicit Rule Set');
+````
 
 An example of how to call a rule application named "MultiplicationApp" is provided below. It runs in the context of the MultiplicationProblem entity, recieves an initial entity state of {FactorA: "3", FactorB: "5"}, then runs the explicit rule set MultiplyAfterRounding.
+````
 CALL MultiplicationApp('MultiplicationProblem', parse_json('{FactorA: ", FactorB: 5}'), 'MultiplyAfterRounding');
+````
