@@ -4,6 +4,7 @@ InRule® currently offers the ability to convert a compatible rule application i
 
 The Snowflake CICD helper routes the rule application's minifiied JavaScript to Snowflake on catalog check-in. It first gets packaged into JavaScript so those settings are still needed here as well. The name of the rule application will be the name of the produced function or procedure in Snowflake. 
 
+
 The configuration is referenced below. The first grouping ties to the connection information. 
 
 |Connection Property | Comments
@@ -15,6 +16,8 @@ The configuration is referenced below. The first grouping ties to the connection
 |**Warehouse**| The configured warehouse.
 |**Database**| The database being ran against.
 |**Schema**| The defined schema.
+|**Type**| Controls creation of a procedure or function in Snowflake. Field should be set as procedure or function.
+|**RevisionTracking**| The defined schema.
 
 ````
 	<add key="Snowflake.User" value="{AccountUserName}"/>
@@ -31,8 +34,6 @@ The configuration is referenced below. The first grouping ties to the connection
 ````
 
 A helpful tip for the Account and the Host is if your Snowflake instance is "nt85445.east-us-2.azure.snowflakecomputing.com" the Account name is "nt85445" and the Host is "nt85445.east-us-2.azure.snowflakecomputing.com".
-
-The Snowflake.Type field allows for a funciton or procedure for the rules to run in Snowflake as. 
 
 The Snowflake.RevisionTracking may become useful if you would like the rule applications' revisions to be brought into the function or procedure to back test against other revisions. For example, if turned on, the revision number would be attached to the end of the function or procedure name where "function_4" would run revision 4 and "function_5" would run revision 5.
 
