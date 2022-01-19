@@ -56,4 +56,5 @@ What is this and how does it work?  irCatalog emits many lifecycle events (check
 * [Generate Java rule application (JAR file) with irDistribution](doc/Java.md)
 * [Generate JavaScript rule application with irDistribution](doc/JavaScript.md)
 * [Jscrambler enhanced JavaScript protection](doc/jscrambler.md)
+* [Javscript integration with Snowflake](doc/Snowflake.md)
 * [CI/CD approval flow](doc/ApprovalFlow.md)
