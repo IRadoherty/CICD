@@ -47,3 +47,11 @@ An example of how to call a rule application named "MultiplicationApp" is provid
 ````
 CALL MultiplicationApp('MultiplicationProblem', parse_json('{FactorA: ", FactorB: 5}'), 'MultiplyAfterRounding');
 ````
+
+To verify that a stored procedure or function was successfully implemented in Snowflake use the corresponding commands below within Snowflake to show a list. 
+
+````
+show procedures;
+
+show functions;
+````
