@@ -4,7 +4,7 @@ If you have not done so already, please read the [prerequisites](deployment.md#p
 
 #### Steps to setup the CI/CD service:
 
-* Deployment optins
+* Deployment options
   * [ARM Template Deployment](#ARM-Template-Deployment)
   * [Using PowerShell and Azure CLI](#Deployment-using-PowerShell-and-Azure-CLI)
     
@@ -38,6 +38,9 @@ Deploying CI/CD with an ARM template is the easiest route as all of it can be do
 
     ![ARMTemplateScreen](../images/ARMTemplateScreen.png)
 
+* The last step is to deploy the license file to the newly created CI/CD app service. This can easily be done by using the App Service Editor from within the CI/CD app service. Under the Development Tools in the left hand navigation of the app service click the app service editor as shown below, then click **Go** when that page loads. Right click on some blank space under WWWROOT and click **Upload Files** to upload the InRuleLicense.xml file. 
+The app service editor can also be launched from the KUDU console by adding .scm before the base URL and add dev at the end. Here is an example: https://mysite.scm.azurewebsites.net/dev
+  
 
 ---
 ## PowerShell and Azure CLI Deployment
