@@ -6,7 +6,7 @@ If you have not done so already, please read the [prerequisites](deployment.md#p
 
 * Deployment optins
   * [ARM Template Deployment](#ARM-Template-Deployment)
-  * [Using PowerShell and Azure CLI](#Deployment-using-PowerShell-and-Azure-CLI)
+  * [Using PowerShell and Azure CLI](#PowerShell-and-Azure-CLI-Deployment)
     
 * Install or update irCatalog® Service
   * [Install or update irCatalog® Service](#Deployment-using-PowerShell-and-Azure-CLI)
