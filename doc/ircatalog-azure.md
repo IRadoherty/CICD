@@ -1,45 +1,134 @@
-# irCatalog Service with CI/CD Features - Azure Deployment
+# InRule CI/CD Service - Azure
 
-irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
+If you have not done so already, please read the [prerequisites](deployment.md#prerequisites) before you get started.
 
-The CI/CD solution requires a number of binaries and configuration parameters to be deployed to the Azure® irCatalog service instance. There are two options for deploying these components:
+#### Steps to setup the CI/CD service:
 
-### Create and configure a new instance of irCatalog app service
+* Deployment optins
+  * [ARM Template Deployment](#ARM-Template-Deployment)
+  * [Using PowerShell and Azure CLI](#Deployment-using-PowerShell-and-Azure-CLI)
+    
+* Install or update irCatalog® Service
+  * [Install or update irCatalog® Service](#Deployment-using-PowerShell-and-Azure-CLI)
 
-* [Database Deployment](ircatalog-azure-db.md)
-* [irCatalog Web App Deployment](ircatalog-azure-cicd.md)
-* [Configure CI/CD Catalog Service](#configure-catalog-service-with-cicd)
+* Enable WCF Service
+  * [Configuring irCatalog WCF Service for the Event Listener](InRuleCICD_WcfBehaviorExtension)
+  
+* Configure the service:
+  * [App Service Configuration](#configure-inrule-cicd-service)
 
-### Update an existing instance of irCatalog app service
+## ARM Template Deployment
+Deploying CI/CD with an ARM template is the easiest route as all of it can be done directly in the Azure portal.
 
-* This option applies if you first [deployed the standard Azure irCatalog App Service](https://github.com/InRule/AzureAppServices).
-* [Add CI/CD Artifacts](#add-cicd-artifacts-to-an-existing-catalog-service)
-* [Configure CI/CD Catalog Service](#configure-catalog-service-with-cicd)
+* First download the [CI/CD ARM template zip file](../releases/InRule.CICD.ARMTemplates).
+* From the Azure Portal search for **Deploy a custom template**.
+* Once the custom deployment screen loads select **Build your own template in the editor**.
+
+    ![Azure App Service Editor](../images/BuildYourOwnTemplate.png)
+
+* Select **Load file** on the next screen and upload the **InRule.CICD.Runtime.Service.json** from the zip file downloaded above. Once loaded click **Save** at the bottom of the screen.
+
+    ![LoadFile](../images/LoadFile.png)
+
+* Now load the paramaters file by clicking **Edit parameters**. On the next screen select **Load file** again and load the **InRule.CICD.Runtime.Service.parameters.json** file. Click **Save** once complete. 
+  
+    ![EditParameters](../images/EditParameters.png)
+
+* Choose the resource group to be used and Iif installing a new service leave **Create Or Update CICD Service Plan** as **true** and type the desired CI/CD app service name, app service plan and plan Sku. If upgrading set to **false** and enter the existing app service plan and app service name where CI/CD was previosuly installed. A finished example is below:
+
+    ![ARMTemplateScreen](../images/ARMTemplateScreen.png)
+
 
 ---
-## Add CICD Artifacts to an Existing Catalog Service
+## PowerShell and Azure CLI Deployment
 
-This section applies when deploying only the CI/CD add-on to an existing instance of the irCatalog App Service. The steps to configure the Azure app service with the CI/CD features are:
+### Sign in to Microsoft Azure
+First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/starting-windows-powershell) and use the Microsoft Azure® CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft Azure subscription:
+```powershell
+az login
+```
 
-* Download [InRule.Catalog.Service_CICD.zip](../releases/InRule.Catalog.Service_CICD.zip) and unzip in a folder on the local file system.
-* Copy the content of the bin folder to the existing bin folder in App Service Editor. Accept to overwrite files, if prompted.
+### Set active subscription
+If your Microsoft Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Microsoft Azure resources:
+```powershell
+# Example: az account set --subscription "Contoso Subscription 1"
+az account set --subscription SUBSCRIPTION_NAME
+```
 
+### Create resource group
+Create the resource group (one resource group per environment is typical) that will contain the InRule®-related Microsoft Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
+```powershell
+# Example: az group create --name inrule-prod-rg --location eastus
+az group create --name RESOURCE_GROUP_NAME --location LOCATION
+```
+
+### Create App Service plan
+Create the [App Service plan](https://docs.microsoft.com/en-us/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview) that will host the InRule-related web apps with the [az appservice plan create](https://docs.microsoft.com/en-us/cli/azure/appservice/plan#az-appservice-plan-create) command:
+```powershell
+# Example: az appservice plan create --name inrule-prod-sp --resource-group inrule-prod-rg --location eastus
+az appservice plan create --name APP_SERVICE_PLAN_NAME --resource-group RESOURCE_GROUP_NAME --location LOCATION
+```
+
+### Create Web App
+Create the [Microsoft Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for InRule CI/CD Service with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
+```powershell
+# Example: az webapp create --name contoso-inrule-cicd-prod-wa --plan inrule-prod-sp --resource-group inrule-prod-rg
+az webapp create --name WEB_APP_NAME --plan APP_SERVICE_PLAN_NAME --resource-group RESOURCE_GROUP_NAME
+```
+
+### Deploy package
+First, [download](../releases) the latest InRule CI/CD Service package (`InRule.CICD.Runtime.Service.zip`) from GitHub. Then [deploy the zip file](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-zip) package to the Web App with the [az webapp deployment source](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source#az-webapp-deployment-source-config-zip) command:
+```powershell
+# Example: az webapp deployment source config-zip --name contoso-inrule-cicd-prod-wa --resource-group inrule-prod-rg --src InRule.CICD.Runtime.Service.zip
+az webapp deployment source config-zip --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --src FILE_PATH
+```
+
+### Upload valid license file
+In order for InRule CI/CD Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
+
+First, retrieve the FTP deployment profile (url and credentials) with the [az webapp deployment list-publishing-profiles](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment#az-webapp-deployment-list-publishing-profiles) command and put the values into a variable:
+```powershell
+# Example: az webapp deployment list-publishing-profiles --name contoso-inrule-cicd-prod-wa --resource-group inrule-prod-rg --query "[?contains(publishMethod, 'FTP')].{publishUrl:publishUrl,userName:userName,userPWD:userPWD}[0]" | ConvertFrom-Json -OutVariable creds | Out-Null
+az webapp deployment list-publishing-profiles --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --query "[?contains(publishMethod, 'FTP')].{publishUrl:publishUrl,userName:userName,userPWD:userPWD}[0]" | ConvertFrom-Json -OutVariable creds | Out-Null
+```
+
+Then, upload the license file using those retrieved values:
+```powershell
+# Example: $client = New-Object System.Net.WebClient;$client.Credentials = New-Object System.Net.NetworkCredential($creds.userName,$creds.userPWD);$uri = New-Object System.Uri($creds.publishUrl + "/InRuleLicense.xml");$client.UploadFile($uri, "$pwd\InRuleLicense.xml");
+$client = New-Object System.Net.WebClient;$client.Credentials = New-Object System.Net.NetworkCredential($creds.userName,$creds.userPWD);$uri = New-Object System.Uri($creds.publishUrl + "/InRuleLicense.xml");$client.UploadFile($uri, "LICENSE_FILE_ABSOLUTE_PATH");
+```
 ---
-## Configure Catalog Service with CICD
+## Configure InRule CICD service
+The service requires a set of key value pairs in order to function properly, like the subscription key provided by InRule and the symmetric encryption/decryption key used to secure the communication with the irCatalog® Service.
 
-This section applies to both deployment options: new irCatalog service with CI/CD or existing irCatalog service.  Once either app service was created and the binaries deployed or updated, the configuration must be updated using [Azure portal](https://portal.azure.com): 
-* Download the starter configuration file [InRule.Catalog.Service_CICD.config.json](../config/InRule.Catalog.Service_CICD.config.json) and save it to the local file system. Edit the values for *AesEncryptDecryptKey* and *ApiKeyAuthentication.ApiKey* to match the values set on the InRule CI/CD service.
+For now, it is possible to [download the starter config file](../config/InRule.CICD.Runtime.Service.config.json), in the format that is accepted when updating the app service via the Azure portal, and edit it. The starter file has only a few keys enabled, enough to ensure the encryption of the communication with the catalog and have the service react to a number of catalog events with a Slack message. The Slack webhook URL would have to be replaced with the correct value needed to send messages to the channel chosen and configured by the user.
+
+For all the available actions, follow the corresponding details available at the links below, which include how :
+
+* [Understanding and using notifications](Notifications.md)
+* [Slack integration](InRuleCICD_Slack.md)
+* [Azure DevOps integration](DevOps.md)
+* [Trigger a DevOps pipeline running regression tests and promoting rule application](../devops)
+* [Azure Event Grid integration](AzureEventGrid.md)
+* [Azure Service Bus integration](AzureServiceBus.md)
+* [Generate Rule Application Report](RuleAppReport.md)
+* [Generate Rule Application Difference Report](RuleAppDiffReport.md)
+* [Generate Java Rule Application (JAR file) with irDistribution Service](Java.md)
+* [Generate JavaScript Rule Application with irDistribution Service](JavaScript.md)
+* [CI/CD Approval Flow](ApprovalFlow.md)
+
+The encryption being symmetric, the same key value must be set in the Azure catalog app service's configuration (**AesEncryptDecryptKey**). Similarly, an authentication key (**ApiKeyAuthentication.ApiKey**) is required to communicate with the CI/CD service, which has to match the value set for the catalog service.
 
 |Configuration Key | Comments
 --- | ---
-|**IsCloudBased**| Accepts values "true" or "false".  Must be set to "true" for Azure deployments and "false" for on-premise. Used for both the client and server components.
-|**FilterEventsByUser**| List of space separated catalog user names.  This value is empty by default, meaning that events from all catalog users will be intercepted by CI/CD.  If usernames are listed here, the CI/CD solution will only react to events triggered by these users. Used for both the client and server components.
-|**ApprovalFlow.ApplyLabelApprover**| The user designated as label assignment approver.  If this user attempts to assign a label, it will be accepted directly.  If a different user attempts the same, [the approval flow](ApprovalFlow.md) will kick in.
-|**InRuleCICDServiceUri**| Complete URL for the CI/CD service, where event data are sent and processed.  For on-premise deployments, this parameter is not used.  Used only for the client component.
 |**ApiKeyAuthentication.ApiKey**| A string added to the authorization header on the request made by the listener component to the CI/CD service. The value can be any string and we recommend using randomly generated GUID values. For on-premise deployments, this parameter is not used.   Used for both the client and server components.  For a pair of catalog and CI/CD services that are set to work together, **this parameter must be set to the same value on both services**.
 |**AesEncryptDecryptKey**| A string value used for symmetric encryption/decryption of the payload sent by the catalog listener component to the CI/CD service. It must be between 16 and 32 characters long, with a combination of letters and numbers. For on-premise deployments, this parameter is not used.   Used for both the client and server components.  For a pair of catalog and CI/CD services that are set to work together, **this parameter must be set to the same value on both services**.
 
-* In Azure portal, navigate to the App Service Editor:
+![Azure configuration for keys](../images/InRuleCICD_configkeys.PNG)
+
+Next, edit the json config files with all the pertinent configuration parameters to drive the runtime behavior, like which actions to run on events and necessary configuration for each action.
+
+* In [Azure portal](https://portal.azure.com), navigate to the App Service Editor:
 
     ![Azure App Service Editor](../images/InRuleCICD_AzureAddOn1.png)
 * Open the bulk configuration editor, by clicking "Advanced edit", and merge the items in the file downloaded and edited before.  You must maintain the validity of the JSON array content, following the format in the two files to merge only the new configuration entries:
@@ -48,23 +137,9 @@ This section applies to both deployment options: new irCatalog service with CI/C
 * Click Save and agree with the action that restarts the app service:
 
     ![Azure App Service Editor](../images/InRuleCICD_AzureAddOn3.png)
-* Restart the app service and confirm that the irCatalog service works properly: browse to the URL in browser, open a rule application in irAuthor.
 
-* If the InRule CI/CD App Service was created before the creation of the irCatalog App Service, it is necessary to update the CI/CD App Service configuration with the credentials required for accessing irCatalog App Service.  This can be done by navigating to the CI/CD App Service in [Azure portal](https://portal.azure.com) and setting the value of the CatalogUsername and CatalogPassword parameters.  Make sure to include "/Service.svc/api", like in the example below.  Saving the configuration and restarting the irCatalog App Service are required.
+* If the InRule CI/CD App Service was created and configured after setting up the CI/CD components on the irCatalog App Service, it is necessary to update the irCatalog App Service configuration with the newly created InRule CI/CD App Service URI.  This can be done by navigating to the irCatalog App Service in [Azure portal](https://portal.azure.com) and setting the value of the InRuleCICDServiceUri parameter.  Make sure to include "/Service.svc/api", like in the example below.  Saving the configuration and restarting the irCatalog App Service are required.
 
-    ```
-    {
-        "name": "CatalogPassword",
-        "value": "",
-        "slotSetting": false
-    },
-    {
-        "name": "CatalogUsername",
-        "value": "admin",
-        "slotSetting": false
-    }
-    ```
+    ![Azure App Service Editor](../images/InRuleCICD_AzureAddOn4.png)
 
----
-### Verify using irAuthor®
-Using irAuthor you should now be able to connect to your catalog using the url [https://WEB_APP_NAME.azurewebsites.net/service.svc](https://WEB_APP_NAME.azurewebsites.net/service.svc).
+* To confirm the integration with the irCatalog App Service, generate an event for which a handler was configured and validate that the triggered actions are correct.
