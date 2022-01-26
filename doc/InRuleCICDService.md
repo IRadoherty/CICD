@@ -2,16 +2,48 @@
 
 If you have not done so already, please read the [prerequisites](deployment.md#prerequisites) before you get started.
 
-#### Deploying a new instance:
+#### Steps to setup the CI/CD service:
 
-* [App Service Deployment](#deployment)
-* [App Service Configuration](#configure-inrule-cicd-service)
+* Deployment optins
+  * [ARM Template Deployment](#ARM-Template-Deployment)
+  * [Using PowerShell and Azure CLI](#Deployment-using-PowerShell-and-Azure-CLI)
+    
+* Install or update irCatalog® Service
+  * [Install or update irCatalog® Service](#Deployment-using-PowerShell-and-Azure-CLI)
+
+* Enable WCF Service
+  * [Configuring irCatalog WCF Service for the Event Listener](../doc/InRuleCICD_WcfBehaviorExtension.md)
+  
+* Configure the service:
+  * [App Service Configuration](#configure-inrule-cicd-service)
+
+## ARM Template Deployment
+Deploying CI/CD with an ARM template is the easiest route as all of it can be done directly in the Azure portal.
+
+* First download the [CI/CD ARM template zip file](../releases/InRule.CICD.ARMTemplates).
+* From the Azure Portal search for **Deploy a custom template**.
+* Once the custom deployment screen loads select **Build your own template in the editor**.
+
+    ![Azure App Service Editor](../images/BuildYourOwnTemplate.png)
+
+* Select **Load file** on the next screen and upload the **InRule.CICD.Runtime.Service.json** from the zip file downloaded above. Once loaded click **Save** at the bottom of the screen.
+
+    ![LoadFile](../images/LoadFile.png)
+
+* Now load the paramaters file by clicking **Edit parameters**. On the next screen select **Load file** again and load the **InRule.CICD.Runtime.Service.parameters.json** file. Click **Save** once complete. 
+  
+    ![EditParameters](../images/EditParameters.png)
+
+* Choose the resource group to be used and Iif installing a new service leave **Create Or Update CICD Service Plan** as **true** and type the desired CI/CD app service name, app service plan and plan Sku. If upgrading set to **false** and enter the existing app service plan and app service name where CI/CD was previosuly installed. A finished example is below:
+
+    ![ARMTemplateScreen](../images/ARMTemplateScreen.png)
+
 
 ---
-## Deployment
+## PowerShell and Azure CLI Deployment
 
 ### Sign in to Microsoft Azure
-First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Microsoft Azure® CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft Azure subscription:
+First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/starting-windows-powershell) and use the Microsoft Azure® CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft Azure subscription:
 ```powershell
 az login
 ```
