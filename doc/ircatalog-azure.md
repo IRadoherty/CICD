@@ -9,7 +9,7 @@ If you have not done so already, please read the [prerequisites](deployment.md#p
   * [Using PowerShell and Azure CLI](#Deployment-using-PowerShell-and-Azure-CLI)
     
 * Install or update irCatalog® Service
-  * [Install or update irCatalog® Service](#Deployment-using-PowerShell-and-Azure-CLI)
+  * [Install or update irCatalog® Service](ircatalog-azure.md)
 
 * Enable WCF Service
   * [Configuring irCatalog WCF Service for the Event Listener](InRuleCICD_WcfBehaviorExtension.md)
