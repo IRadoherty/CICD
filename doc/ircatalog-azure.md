@@ -12,7 +12,7 @@ If you have not done so already, please read the [prerequisites](deployment.md#p
   * [Install or update irCatalog® Service](#Deployment-using-PowerShell-and-Azure-CLI)
 
 * Enable WCF Service
-  * [Configuring irCatalog WCF Service for the Event Listener](InRuleCICD_WcfBehaviorExtension)
+  * [Configuring irCatalog WCF Service for the Event Listener](InRuleCICD_WcfBehaviorExtension.md)
   
 * Configure the service:
   * [App Service Configuration](#configure-inrule-cicd-service)
