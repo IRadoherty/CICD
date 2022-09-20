@@ -1,5 +1,7 @@
 ## Deployment options
 
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.storage/storage-account-create/azuredeploy.json)
+
 ### Azure
 InRule® provides cloud deployment options that allow you to run irCatalog®, irCatalog Manager website, and irServer® Rule Execution Service inside of the Microsoft® Azure® App Service environment with minimal configuration and setup. If you are already familiar with Microsoft Azure and App Service Web Apps, then you are just a few steps away from deploying InRule CI/CD.
 
